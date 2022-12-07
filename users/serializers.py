@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import User
 from rest_framework.validators import UniqueValidator
-import ipdb
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -35,3 +35,12 @@ class RegisterSerializer(serializers.Serializer):
         if validated_data["is_employee"]:
             return User.objects.create_superuser(**validated_data)
         return User.objects.create_user(**validated_data)
+
+
+class CustomJWTSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["is_superuser"] = user.is_superuser
+
+        return token
