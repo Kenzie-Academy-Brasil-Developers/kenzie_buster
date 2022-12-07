@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 
 class Rating(models.TextChoices):
@@ -23,5 +24,17 @@ class Movie(models.Model):
     user = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
-        related_name="user",
+        related_name="movies",
     )
+    ordered_by = models.ManyToManyField(
+        User,
+        through="MovieOrder",
+        related_name="movie",
+    )
+
+
+class MovieOrder(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    buyed_at = models.DateTimeField(auto_now_add=True)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
