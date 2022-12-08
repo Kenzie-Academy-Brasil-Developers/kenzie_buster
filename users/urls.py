@@ -1,8 +1,8 @@
 from django.urls import path
-from . import views
-from .views import LoginJWTView
+from .views import LoginJWTView, RegisterView, UserView
 
 urlpatterns = [
-    path("users/", views.RegisterView.as_view()),
+    path("users/", RegisterView.as_view()),
     path("users/login/", LoginJWTView.as_view()),
+    path("users/<int:user_id>/", UserView.as_view()),
 ]

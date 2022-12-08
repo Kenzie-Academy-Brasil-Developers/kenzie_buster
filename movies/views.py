@@ -5,13 +5,15 @@ from movies.models import Movie
 from movies.serializers import MoviesSerializer, MoviesOrderSerializer
 from .permissions import MyCustomPermission, CustomerPermision
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.pagination import PageNumberPagination
 
 
-class MovieView(APIView):
+class MovieView(APIView, PageNumberPagination):
     def get(self, request):
         movie = Movie.objects.all()
-        serializer = MoviesSerializer(movie, many=True)
-        return Response(serializer.data)
+        result_page = self.paginate_queryset(movie, request, view=self)
+        serializer = MoviesSerializer(result_page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [MyCustomPermission]
